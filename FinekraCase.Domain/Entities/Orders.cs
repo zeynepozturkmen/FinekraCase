@@ -6,6 +6,6 @@
         public UserDetails UserDetail { get; set; }
         public string ShipAddress { get; set; }
         public DateTime OrderDate { get; set; }
-        public List<OrderDetails> OrderDetails { get; set; }
+        public List<OrderDetails> OrderDetails { get; set; }=new List<OrderDetails>();
     }
 }

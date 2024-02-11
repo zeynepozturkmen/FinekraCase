@@ -20,7 +20,10 @@ namespace FinekraCase.Infrastructure
         {
             var entity = await _dbContext.Set<T>().FindAsync(id);
 
-            _dbContext.Entry(entity).State = EntityState.Detached;
+            if (entity is not null)
+            {
+                _dbContext.Entry(entity).State = EntityState.Detached;
+            }
 
             return entity;
         }
@@ -67,23 +70,20 @@ namespace FinekraCase.Infrastructure
         }
         public virtual async Task DeleteAsync(T entity)
         {
-            entity.RecordStatus = RecordStatus.Passive;
-
-            _dbContext.Entry(entity).State = EntityState.Modified;
-
+            _dbContext.Entry(entity).State = EntityState.Deleted;
             await _dbContext.SaveChangesAsync();
         }
 
-        public virtual async Task RemoveRangeAsync(List<T> entity)
+        public virtual async Task RemoveRangeAsync(List<T> entities)
         {
-            foreach (var item in entity)
+
+            foreach (var entity in entities)
             {
-                item.RecordStatus = RecordStatus.Passive;
+                _dbContext.Entry(entity).State = EntityState.Deleted;
             }
 
-            _dbContext.Entry(entity).State = EntityState.Modified;
-
             await _dbContext.SaveChangesAsync();
+
         }
 
         public virtual async Task<List<T>> AddRangeAsync(List<T> entity)

@@ -1,5 +1,7 @@
 ﻿using FinekraCase.Domain.Entities;
+using FinekraCase.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection;
@@ -64,6 +66,29 @@ namespace FinekraCase.Infrastructure.Persistence
                     }
                 }
             }
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Property("CreateDate").CurrentValue = DateTime.Now;
+                        entry.Property("RecordStatus").CurrentValue = RecordStatus.Active;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Property("UpdateDate").CurrentValue = DateTime.Now;
+                        break;
+                }
+            }
+
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            return result;
         }
     }
 }
