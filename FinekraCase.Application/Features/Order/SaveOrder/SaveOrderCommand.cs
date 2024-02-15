@@ -56,6 +56,7 @@ namespace FinekraCase.Application.Features.Order.SaveOrder
                         OrderId = order.Id,
                         Count = item.Count,
                         CreatedBy = user.UserName,
+                        Price=item.Price
                     });
                 }
 
